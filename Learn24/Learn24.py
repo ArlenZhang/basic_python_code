@@ -2,7 +2,6 @@
     模块是更高级的封装,例如Learn7.py就是一个模块，导入使用,提高代码的复用性
 """
 import sys
-
 import code.Learn24.test1 as t1
 import code.Learn24.Model1 as m
 import code.Learn24.test2 as t2

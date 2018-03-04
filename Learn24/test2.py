@@ -1,2 +1,2 @@
 def func():
-	print('Just test!')
+    print('Just test!')

@@ -29,7 +29,7 @@ def check_emoji(eva_t):
             str_new += content
     return str_new
 
-def do_fetch(page_number, file_dir):
+def do_fetch(hotel_num, file_dir):
     hotels_url = 'http://hotels.ctrip.com/hotel/beijing1#ctm_ref=hod_hp_sb_lst'
     req = urllib.request.Request(hotels_url)
     response = urllib.request.urlopen(req)
@@ -41,20 +41,25 @@ def do_fetch(page_number, file_dir):
     seqList = re.findall(r'<h2 class="hotel_name" data-id="(\d*)">', htmlData)
     # 遍历序号访问评论区
     evaluation_list = list()
+    # 训练数据
+    test_list = list()
     count = 0
     for seq in seqList:
-        if count == 3:
+        if count == hotel_num:
             break
         count += 1
         baseEvaUrl = 'http://hotels.ctrip.com/hotel/dianping/' + str(seq) + '_p'
         # 每个酒店遍历前十个页面的所有评论
-        for i in range(page_number):
+        for i in range(10):
             tempEvaUrl = baseEvaUrl + str(i + 1) + 't0.html'
             response = urllib.request.urlopen(tempEvaUrl)
             pageData = response.read().decode('utf-8')
             # 用评论的正则表达公式获取用户评论区内容
             findEvaList = re.findall(r"<div class='J_commentDetail'>([^(</div>)]*)</div>", pageData)
-            evaluation_list.extend(findEvaList)
+            if count < hotel_num-1:
+                evaluation_list.extend(findEvaList)
+            else:
+                test_list.extend(findEvaList)
 
     # 评论内容存储，用pickle泡菜同时存储在txt文件中
     count = 1
@@ -68,5 +73,8 @@ def do_fetch(page_number, file_dir):
                 file_obj.write(eva + "\n")
             count += 1
 
-    with open(os.path.join(file_dir, "eva.pkl"), 'a') as pkl_obj:
+    with open(os.path.join(file_dir, "eva.pkl"), 'wb') as pkl_obj:
         pickle.dump(evaluation_list, pkl_obj)
+
+    with open(os.path.join(file_dir, "test.pkl"), 'wb') as pkl_obj:
+        pickle.dump(test_list, pkl_obj)

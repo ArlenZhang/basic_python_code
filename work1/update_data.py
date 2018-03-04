@@ -20,7 +20,7 @@ def check_emoji(eva_t):
 def do_update(file_dir):
     pk_file = open(os.path.join(file_dir, 'eva.pkl'), 'rb')
     eva_list = pickle.load(pk_file)
-    with open(os.path.join(file_dir, 'standard.txt', 'a')) as fileObj:
+    with open(os.path.join(file_dir, 'standard.txt'), 'a') as fileObj:
         for line in eva_list:
             try:
                 fileObj.write(line + "\n")

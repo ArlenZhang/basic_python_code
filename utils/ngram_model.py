@@ -12,12 +12,15 @@ Ngram模型的Python程序构建：
 import pickle
 import os
 
+
 class ngram_model:
     def __init__(self, file_dir):
         self.bigram_list = None
         self.trigram_list = None
         self.pkl_file = open(os.path.join(file_dir, "eva.pkl"), 'rb')  # rb二进制读取形式打开
         self.str_list = pickle.load(self.pkl_file)
+        self.pkl_file = open(os.path.join(file_dir, "test.pkl"), 'rb')  # rb二进制读取形式打开
+        self.test_list = pickle.load(self.pkl_file)
 
     # 距离计算函数
     def compute_distence(self, str_a, str_b):
@@ -68,7 +71,6 @@ class ngram_model:
                 count += 1
         return count
 
-
     def count_tri_exist(self, str_t, trigram_list_t):
         count = 0
         for item in trigram_list_t:
@@ -78,7 +80,7 @@ class ngram_model:
 
     # 计算Bigram概率函数
     def bigram_test(self, str_c, bigram_list_t):
-        # 为每个词对应计数器？
+        # 为每个词对应计数器
         test_list = self.get_bi_sublist(str_c)
         count = 0
         '''算法思路：涉及遍历的时候我们让总量小的多次遍历，让总量多的一次遍历？未必'''
@@ -124,13 +126,30 @@ class ngram_model:
         提供用于计算概率的句子
         返回句子的概率
     """
+
     def eval(self, sent):
         # 如果不为空则不驯连
         if self.bigram_list is None or self.trigram_list is None:
+            print("训练")
             self.train()
         count = self.bigram_test(sent, self.bigram_list)
         p = self.probability_comp(sent, self.bigram_list, self.trigram_list, self.str_list)
         return count, p
+
+    def eval_all(self):
+        # 如果不为空则不驯连
+        if self.bigram_list is None or self.trigram_list is None:
+            print("训练")
+            self.train()
+        c_list = list()
+        p_list = list()
+        for sent in self.test_list:
+            count = self.bigram_test(sent, self.bigram_list)
+            p = self.probability_comp(sent, self.bigram_list, self.trigram_list, self.str_list)
+            c_list.append(count)
+            p_list.append(p)
+        return c_list, p_list
+
 
 if __name__ == "__main__":
     sent1 = "酒店交通很方便，魔拜去的恭王府和故宫、北海、景山、天安门，坐地铁也很方便，但是看着床缦订的花梨木套房失望了，人没入住管家已帮我快递收好了"

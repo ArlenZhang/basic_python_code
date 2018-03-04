@@ -1,34 +1,83 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sat Oct  7 18:20:21 2017
+Created on Sat Oct  7 16:04:48 2017
 @author: arlen
-Desc:网络编程基础
-    服务器端套接字和客户短套接字的使用，发送和监听消息。在创建一个套接字之后，让她等待链接，进行交互。
-一个套接字就是socket的一个实例，它的实例化需要3个参数：地址族、流、使用的协议。
-    服务器端套接字使用bind方法之后再调用listen方法监听某个特定的地址。客户端套接字使用connect方法
-连接到服务器端的套接字，connect方法中使用的地址与服务器端的bind方法绑定的地址(host:port)一致。服务器端
-开始监听之后能调用accept方法接受客户端的连接请求，这时候该方法会阻塞（等待）直到客户端连接，并返回一个（
-client,address)的元组，client为客户端套接字。处理完这次连接之后，服务器端accept方法继续监听并处理新的
-连接。
-    套接字有两个方法：send和recv用于传输数据，
-    
-    通信失败的原因，windows下的并发是多线程并发，而两个程序的运行是两个进程不能同时运行，在Linux上面则
-没有这个问题~~pass
+Desc:基于pymysql的数据库编程基本
 """
-#服务器端程序
-import socket
-#创建服务器端套接字
-s=socket.socket()
-host=socket.gethostname()
-port=1234
-s.bind((host,port))
-#调用listen监听客户端请求,参数代表允许的最大连接数
-s.listen(5)
-while True :
-    print('阻塞状态')
-    c,addr=s.accept()
-    print("即将建立和客户端的连接",addr)
-    c.send('谢谢你的访问') #发送到客户端,与客户端交互的函数
-    c.close()
- 
 
+import pymysql.cursors  # 游标概念
+
+# 1. 数据库配置连接
+connect = pymysql.Connect(
+    host='localhost',
+    port=3306,
+    user='root',
+    passwd='jyb450816',
+    db='pythontasks',
+    charset='utf8'
+)
+
+# 2. 获取游标
+cursor = connect.cursor()
+
+# 插入数据
+# sql = "INSERT INTO User (userName,userPWD,gender,age) VALUES ( '%s', '%s', '%s' ,'%d' )"
+# data = ('arlen','123456','男',23)
+# cursor.execute(sql % data)
+# connect.commit()#提交执行
+# print('成功插入', cursor.rowcount, '条数据')
+# input("查看是否插入成功？")
+
+# 修改数据
+sql = "UPDATE User SET userPWD = %s WHERE userName = '%s' "
+data = ('654321', 'arlen')
+cursor.execute(sql % data)
+connect.commit()
+print('成功修改', cursor.rowcount, '条数据')
+input("查看是否修改成功？")
+
+# 查询数据
+userID = 0
+sql = "SELECT id,userName,userPWD,gender,age FROM User WHERE userName = '%s' "
+data = ['arlen']
+cursor.execute(sql % data)
+for row in cursor.fetchall():
+    print("id:%d\tName:%s\tPWD:%s\tgender:%s\tage:%d" % row)
+    userID = row[0]
+print('共查找出', cursor.rowcount, '条数据')
+result = input("是否删除该用户？(y/n)")
+
+# 删除数据
+if result == 'y':
+    sql = "DELETE FROM User WHERE userName = '%s' LIMIT %d"
+    data = ('arlen', 1)
+    cursor.execute(sql % data)
+    connect.commit()
+    print('成功删除', cursor.rowcount, '条数据')
+
+# ===================重点掌握-事务处理====================
+sql_1 = "UPDATE Transaction SET saving = saving + 1000 WHERE userID =" + str(userID)
+sql_2 = "UPDATE Transaction SET expend = expend + 1000 WHERE userID =" + str(userID)
+sql_3 = "UPDATE Transaction SET income = income + 2000 WHERE userID =" + str(userID)
+print(sql_1)
+'''
+    银行在这里的计算方式：存储=收入-支出
+    这里的计算流程，先是收入增加2000，花了1000块还剩1000存在银行。。
+'''
+
+try:
+    cursor.execute(sql_1)  # 储蓄增加1000
+    # 设置系统故障
+    wrong = 2 / 0
+    cursor.execute(sql_2)  # 支出增加1000
+    cursor.execute(sql_3)  # 收入增加2000
+except Exception as e:
+    connect.rollback()  # 事务回滚
+    print('事务处理失败', e)
+else:
+    connect.commit()  # 事务提交，不提交的都可以执行回滚~
+    print('事务处理成功', cursor.rowcount)
+
+# 关闭连接
+cursor.close()
+connect.close()

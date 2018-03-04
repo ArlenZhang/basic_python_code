@@ -1,13 +1,13 @@
 """
-	python之文件操作
-	
-	r 默认只读、w 写入方式打开、x 若文件已经存在则打开异常、a 以追加方式打开、b 二进制打开
-	t 文本格式打开、+ 可读写模式打开、U 通用换行符模式
-	
-	方法列举：close、read、readline、write、writelines、seek、tell
+    python之文件操作
+
+    r 默认只读、w 写入方式打开、x 若文件已经存在则打开异常、a 以追加方式打开、b 二进制打开
+    t 文本格式打开、+ 可读写模式打开、U 通用换行符模式
+
+    方法列举：close、read、readline、write、writelines、seek、tell
 """
 # 1.打开文件并存入文件对象
-fileObj = open('files/file1.txt')
+fileObj = open('../data/file_op/file1.txt')
 text = fileObj.read()  # read没参数就全部读取，read读到末尾，不关闭则无法再读
 print(text)
 
@@ -41,7 +41,7 @@ for line in fileObj:
 fileObj.close()
 
 # 8.写文件
-fileObj = open('files/file1.txt', 'a')
-list_w = ['chaoyue', 'i love you.', 'where are you ?']
+fileObj = open('../data/file_op/file1.txt', 'a')  # append追加
+list_w = ['zly', 'i help you.', 'where are you ?']
 fileObj.writelines(list_w)
 fileObj.close()

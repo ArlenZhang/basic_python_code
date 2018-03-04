@@ -1,15 +1,13 @@
 """
-	图形界面编程: EasyGui工具包  http://easygui.sourceforge.net
+    图形界面编程: EasyGui工具包  http://easygui.sourceforge.net
 """
 # 第一个方式导入需要加easygui对象
-import easygui
-
-easygui.msgbox('嗨，小甲鱼！')  # 消息
+# import easygui
+# easygui.msgbox('嗨，小甲鱼！')  # 消息
 
 # 第二种导入，内部函数
-from easygui import *
-
-msgbox('Still fine')
+# from easygui import *
+# msgbox('Still fine')
 
 # 建议使用方式
 import easygui as g

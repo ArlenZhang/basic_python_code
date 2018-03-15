@@ -12,7 +12,6 @@ import re
 import os
 import pickle
 
-
 # 检测表情符号函数
 def check_emoji(eva_t):
     str_new = ""

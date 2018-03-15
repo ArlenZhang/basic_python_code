@@ -82,13 +82,13 @@ if np.any(df_o.isnull()):
     print(fill_r)
 
 print("---------------Excel导入导出--------------")
-data = pd.read_excel('data/data1.xlsx')
+data = pd.read_excel('../data/data1.xlsx')
 print("输出指定单元格的数据：", data.ix[0, 'userName'])
 
 print("---------------合并DataFrame--------------")
 # concat
-data1 = pd.read_excel('data/data1.xlsx')
-data2 = pd.read_excel('data/data2.xlsx')
+data1 = pd.read_excel('../data/data1.xlsx')
+data2 = pd.read_excel('../data/data2.xlsx')
 c_data = pd.concat([data1, data2], axis=0, ignore_index=True)
 print("concat: ")
 print(c_data)

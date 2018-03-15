@@ -83,6 +83,12 @@ arr_d = np.hstack((arr_a, arr_b))
 print("垂直合并结果: ", "\r\n", arr_c)
 print("水平合并结果: ", "\r\n", arr_d)
 
+# 追加数据
+arr_e = np.row_stack((arr_a, arr_b))
+print("按行追加结果：", "\r\n", arr_e)
+arr_f = np.column_stack((arr_e, np.array([1, 2])))
+print("按列追加结果：", "\r\n", arr_f)
+
 # 行、列分割机器学习常用
 arr_a = np.array([[1, 2, 3], [3, 2, 1], [3, 1, 2]])
 arr_b = np.vsplit(arr_a, 3)
